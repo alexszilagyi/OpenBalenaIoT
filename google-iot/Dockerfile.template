@@ -1,0 +1,21 @@
+FROM balenalib/%%BALENA_MACHINE_NAME%%-alpine-node:11-build as build
+
+# Install node dependencies
+COPY package*.json ./
+RUN npm install --production && npm cache clean --force && rm -rf /tmp/*
+
+
+FROM balenalib/%%BALENA_MACHINE_NAME%%-alpine-node:11-run as run
+VOLUME /data
+
+# Install dependencies
+RUN install_packages openssl
+
+WORKDIR /app
+COPY --from=build ./node_modules ./node_modules
+COPY . .
+
+RUN chmod +x ./wait-for-it/wait-for-it.sh
+
+# Start the container
+CMD ["npm", "start", "sh -c", "/app/wait-for-it/wait-for-it.sh www.google.com:80 -- echo OpenBalena IoT device is connected to the internet!"]

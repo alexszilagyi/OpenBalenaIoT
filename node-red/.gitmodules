@@ -1,0 +1,3 @@
+[submodule "node-red/wait-for-it"]
+	path = node-red/wait-for-it
+	url = https://git.techstackapps.com/iot/wait-for-it.git
